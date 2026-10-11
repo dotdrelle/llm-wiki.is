@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Donna — Living knowledge for AI agents</title>
+  <meta name="description" content="Donna turns living company knowledge into traceable, regenerable deliverables for AI agents. A local-first Docker stack — no server — that orchestrates specialized agents in parallel and connects any MCP tool, local or remote. Source-grounded, model-flexible.">
+  <link rel="icon" href="./favicon.jpeg">
+  <link rel="canonical" href="https://llm-wiki.is/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llm-wiki.is/">
+  <meta property="og:title" content="Donna — Living knowledge for AI agents">
+  <meta property="og:description" content="Four scattered documents, one sourced note, eleven minutes. A local-first knowledge layer that turns company documents into traceable deliverables.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --ink: #0e0e10;
+      --muted: rgba(14,14,16,.62);
+      --soft: rgba(14,14,16,.08);
+      --line: #e7e7e3;
+      --accent: #0a64f0;
+      --accent-2: #2a7af5;
+      --dark-bg: #0b0b0f;
+      --dark-ink: #f5f5f1;
+      --max: 920px;
+      --radius: 30px;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-x: clip;
+    }
+    body {
+      margin: 0;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-x: clip;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .page { overflow: hidden; overflow: clip; }
+    img, svg {
+      max-width: 100%;
+    }
+    img {
+      height: auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(250,250,248,.78);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(14,14,16,.06);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 28px;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .nav-links a:not(.github-mini) {
+      color: rgba(14,14,16,.62);
+    }
+
+    .github-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(14,14,16,.12);
+      background: rgba(255,255,255,.58);
+    }
+
+    section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 92px 24px;
+    }
+
+    .hero {
+      padding-top: 118px;
+      padding-bottom: 80px;
+      text-align: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(14,14,16,.58);
+      margin-bottom: 22px;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 7px rgba(10,100,240,.10);
+    }
+
+    h1, h2, h3 {
+      font-family: "Playfair Display", Georgia, serif;
+      letter-spacing: -.055em;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(64px, 10vw, 118px);
+      line-height: .87;
+      max-width: 980px;
+      margin: 0 auto 28px;
+    }
+
+    h2 {
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1;
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      font-size: 23px;
+      line-height: 1.12;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      font-size: clamp(20px, 2.5vw, 27px);
+      line-height: 1.35;
+      max-width: 760px;
+      margin: 0 auto 18px;
+      color: rgba(14,14,16,.78);
+    }
+
+    .sublead {
+      max-width: 690px;
+      margin: 0 auto 34px;
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height: 1.62;
+    }
+
+    .compliance-note {
+      max-width: 760px;
+      margin: 0 auto 30px;
+      padding: 18px 20px;
+      border: 1px solid rgba(14,14,16,.10);
+      border-radius: 22px;
+      background: rgba(255,255,255,.58);
+      color: rgba(14,14,16,.70);
+      font-size: 14.5px;
+      line-height: 1.58;
+      text-align: left;
+    }
+
+    .compliance-note strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 13px;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .badges span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(14,14,16,.10);
+      background: rgba(250,250,248,.72);
+      color: rgba(14,14,16,.66);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      border: 1px solid transparent;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn.primary {
+      background: var(--ink);
+      color: white;
+      box-shadow: 0 18px 40px rgba(14,14,16,.16);
+    }
+    .btn.primary:hover { background: var(--accent); }
+    .btn.secondary {
+      background: transparent;
+      border-color: rgba(14,14,16,.16);
+      color: var(--ink);
+    }
+    .btn svg { width: 18px; height: 18px; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: 52px;
+      align-items: center;
+    }
+
+    .split > *,
+    .architecture-grid > *,
+    .dark-band .inner > * {
+      min-width: 0;
+    }
+
+    .split > img,
+    .dark-band .inner > img {
+      display: block;
+      width: 100%;
+      justify-self: center;
+    }
+
+    .split.reverse {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+    }
+
+    .section-copy p {
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 15.5px;
+      margin: 0 0 18px;
+    }
+
+    .numbered {
+      display: grid;
+      gap: 22px;
+      margin-top: 24px;
+    }
+
+    .capability {
+      display: grid;
+      grid-template-columns: 46px minmax(0,1fr);
+      gap: 16px;
+      align-items: start;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 28px rgba(10,100,240,.24);
+    }
+
+    .capability p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 15.5px;
+    }
+
+    .visual-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      min-height: 360px;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(0, 217, 255, 0.26), transparent 34%),
+        radial-gradient(circle at 80% 72%, rgba(10, 100, 240, 0.18), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(246,247,250,0.72));
+      box-shadow:
+        0 34px 100px rgba(0, 28, 80, 0.22),
+        inset 0 0 0 1px rgba(14, 14, 16, 0.06);
+      isolation: isolate;
+      margin: 0;
+    }
+
+    .visual-frame::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 24px;
+      bottom: 22px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(14, 14, 16, 0.64);
+      background: rgba(255, 255, 255, 0.70);
+      box-shadow: inset 0 0 0 1px rgba(14, 14, 16, 0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .visual-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+      filter: saturate(1.08) contrast(1.04);
+    }
+
+    .visual-frame.is-wide {
+      min-height: 520px;
+    }
+
+    .visual-frame.is-dark {
+      background:
+        radial-gradient(circle at 50% 44%, rgba(42, 122, 245, 0.42), transparent 34%),
+        radial-gradient(circle at 72% 78%, rgba(10, 100, 240, 0.28), transparent 36%),
+        linear-gradient(135deg, #111118, #08080c);
+      box-shadow:
+        0 34px 100px rgba(0, 0, 0, 0.34),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .visual-frame.is-dark::after {
+      color: rgba(245, 245, 241, 0.74);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .chip {
+      padding: 10px 13px;
+      border: 1px solid rgba(14,14,16,.12);
+      border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .08em;
+      color: rgba(14,14,16,.68);
+      background: rgba(255,255,255,.52);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+
+    .architecture {
+      max-width: 1120px;
+    }
+
+    .architecture .kicker {
+      margin-bottom: 16px;
+    }
+
+    .architecture-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    .architecture-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .architecture-panel img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .dark-band {
+      max-width: none;
+      background: var(--dark-bg);
+      color: var(--dark-ink);
+      margin-top: 70px;
+      padding: 0;
+    }
+
+    .dark-band .inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 100px 24px;
+      display: grid;
+      grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr);
+      gap: 54px;
+      align-items: center;
+    }
+
+    .dark-band p { color: rgba(245,245,241,.66); }
+    .dark-band .kicker { color: rgba(245,245,241,.56); }
+    .dark-band .kicker::before { box-shadow: 0 0 0 7px rgba(42,122,245,.18); }
+
+    .models {
+      text-align: center;
+      padding-top: 74px;
+      padding-bottom: 72px;
+    }
+
+    .models .chips {
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .final {
+      text-align: center;
+      padding-top: 106px;
+      padding-bottom: 110px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 24px;
+      color: rgba(14,14,16,.55);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+
+    .footer-copy {
+      display: grid;
+      gap: 8px;
+      max-width: 720px;
+    }
+
+    .disclaimer {
+      margin: 0;
+      color: rgba(14,14,16,.48);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .footer-inner a {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    @media (max-width: 820px) {
+      .nav-links a:not(.github-mini) { display: none; }
+      .split,
+      .split.reverse,
+      .architecture-grid,
+      .dark-band .inner {
+        grid-template-columns: 1fr;
+      }
+      section { padding: 76px 20px; }
+      .hero { padding-top: 90px; }
+      .split,
+      .split.reverse,
+      .architecture-grid,
+      .dark-band .inner {
+        gap: 34px;
+      }
+      .split > img,
+      .architecture-panel img,
+      .dark-band .inner > img {
+        width: min(100%, 520px);
+        margin-inline: auto;
+      }
+      .visual-frame,
+      .visual-frame.is-wide {
+        min-height: 300px;
+        border-radius: 24px;
+      }
+      .architecture { max-width: var(--max); }
+      .capability {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .nav-inner { padding: 14px 16px; }
+      .brand { font-size: 24px; }
+      .github-mini {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+      h1 { font-size: clamp(43px, 15vw, 58px); }
+      .lead { font-size: 19px; }
+      .kicker {
+        max-width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        line-height: 1.45;
+      }
+      .compliance-note {
+        padding: 16px;
+        border-radius: 18px;
+        font-size: 14px;
+      }
+      .badges {
+        justify-content: center;
+      }
+      .btn { width: 100%; }
+      .actions { width: 100%; }
+      .chips { justify-content: center; }
+      .visual-frame::after {
+        left: 16px;
+        bottom: 16px;
+        font-size: 10px;
+      }
+    }
+
+    [hidden] { display: none !important; }
+    /* ---------- hero shot ---------- */
+    .hero-shot {
+      display: block;
+      max-width: 1040px;
+      margin: 64px auto 0;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 50px 120px rgba(0,28,80,.22), 0 0 0 1px rgba(14,14,16,.08);
+      transform: perspective(1800px) rotateX(5deg);
+      transform-origin: 50% 0;
+      transition: transform .5s ease;
+    }
+    .hero-shot:hover { transform: none; }
+    .hero-shot img { display: block; width: 100%; }
+
+    .shot-bar {
+      display: flex; align-items: center; gap: 7px;
+      height: 34px; padding: 0 12px;
+      background: #f1f2f4;
+      border-bottom: 1px solid rgba(14,14,16,.08);
+      font-family: "JetBrains Mono", monospace; font-size: 11px;
+      color: rgba(14,14,16,.5); letter-spacing: .02em;
+    }
+    .shot-bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(14,14,16,.14); flex: none; }
+    .shot-bar span { margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ---------- story ---------- */
+    .story { max-width: 1240px; padding-top: 60px; }
+    .story-head { text-align: center; max-width: 820px; margin: 0 auto; }
+    .story-head h2 { font-size: clamp(36px, 5vw, 64px); }
+    .story-head .sublead { margin-bottom: 40px; }
+    .stats {
+      display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 1px; margin: 0; background: var(--line);
+      border: 1px solid var(--line); border-radius: 22px; overflow: hidden;
+    }
+    .stats div { background: #fff; padding: 22px 14px; }
+    .stats dt {
+      font-family: "Playfair Display", Georgia, serif; font-weight: 700;
+      font-size: 44px; line-height: 1; letter-spacing: -.04em;
+    }
+    .stats dt small { font-size: 18px; margin-left: 3px; letter-spacing: 0; color: var(--muted); }
+    .stats dd { margin: 8px 0 0; font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+    .story-rail {
+      position: sticky; top: 76px; z-index: 15;
+      margin: 64px 0 0; padding: 10px 0 0;
+    }
+    .story-rail::before {
+      content: ""; position: absolute; z-index: -1; top: 0; bottom: 0;
+      left: calc(50% - 50vw); right: calc(50% - 50vw);
+      background: rgba(250,250,248,.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(14,14,16,.06);
+    }
+    .rail-inner {
+      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+      padding-bottom: 10px;
+    }
+    .rail-inner::-webkit-scrollbar { display: none; }
+    .rail-inner a {
+      flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 8px 12px; border-radius: 999px;
+      font-family: "JetBrains Mono", monospace; font-size: 11.5px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(14,14,16,.5);
+      transition: color .2s, background .2s;
+    }
+    .rail-inner a span { color: rgba(14,14,16,.32); }
+    .rail-inner a:hover { color: var(--ink); }
+    .rail-inner a.is-active { background: var(--ink); color: #fff; }
+    .rail-inner a.is-active span { color: rgba(255,255,255,.55); }
+    .rail-inner a.is-done { color: var(--accent); }
+    .rail-progress { height: 2px; background: var(--line); }
+    .rail-progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .15s linear; }
+
+    .chapters { position: relative; padding-top: 40px; }
+    .chapter {
+      display: grid;
+      grid-template-columns: minmax(0, 310px) minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding: 64px 0;
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 140px;
+    }
+    .chapter:first-child { border-top: 0; }
+    .ch-copy { position: sticky; top: 150px; }
+    .ch-meta {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+      font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: rgba(14,14,16,.5);
+    }
+    .ch-num {
+      display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+      color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 24px rgba(10,100,240,.22); letter-spacing: 0;
+    }
+    .ch-meta time { margin-left: auto; padding: 4px 9px; border-radius: 999px; background: rgba(14,14,16,.05); letter-spacing: .04em; }
+    .chapter h3 { font-size: 30px; line-height: 1.08; letter-spacing: -.04em; margin-bottom: 14px; }
+    .chapter p { color: var(--muted); font-size: 15.5px; line-height: 1.62; margin: 0 0 20px; }
+    .chapter code, .story-end code {
+      font-family: "JetBrains Mono", monospace; font-size: .86em;
+      padding: 1px 5px; border-radius: 6px; background: rgba(10,100,240,.08); color: #0848ad;
+    }
+
+    .notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+    .notes li {
+      display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 10px; align-items: start;
+      padding: 8px 10px; margin: 0 -10px; border-radius: 12px;
+      font-size: 14px; line-height: 1.45; color: rgba(14,14,16,.78);
+      cursor: default; transition: background .2s;
+    }
+    .notes li.is-hot { background: rgba(10,100,240,.07); }
+    .pin-dot, .pin {
+      display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+      font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+      color: #fff; background: var(--accent);
+    }
+
+    .tabs {
+      display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 14px;
+      border-radius: 999px; background: rgba(14,14,16,.05);
+    }
+    .tabs button {
+      appearance: none; border: 0; cursor: pointer;
+      padding: 8px 14px; border-radius: 999px; background: transparent;
+      font: 700 11.5px/1 "JetBrains Mono", monospace; letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(14,14,16,.55);
+    }
+    .tabs button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(14,14,16,.10); }
+    .tabs button:focus-visible, .zoom:focus-visible, .rail-inner a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .shot {
+      margin: 0; border-radius: 16px; overflow: hidden; background: #fff;
+      box-shadow: 0 30px 80px rgba(0,28,80,.16), 0 0 0 1px rgba(14,14,16,.08);
+      animation: shotIn .35s ease;
+    }
+    @keyframes shotIn { from { opacity: .3; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .shot-bar .zoom {
+      margin-left: auto; appearance: none; border: 0; background: transparent; cursor: zoom-in;
+      font-size: 15px; color: rgba(14,14,16,.45); padding: 4px 6px; border-radius: 6px;
+    }
+    .shot-bar .zoom:hover { color: var(--ink); background: rgba(14,14,16,.06); }
+    .shot-img { position: relative; cursor: zoom-in; }
+    .shot-img img { display: block; width: 100%; height: 100%; }
+    .pin {
+      position: absolute; transform: translate(-50%, -50%);
+      width: 26px; height: 26px; font-size: 12px;
+      box-shadow: 0 0 0 4px rgba(10,100,240,.22), 0 6px 16px rgba(10,100,240,.35);
+      transition: transform .2s, box-shadow .2s; pointer-events: none;
+    }
+    .pin::after {
+      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid rgba(10,100,240,.5); animation: ping 2.4s ease-out infinite;
+    }
+    .pin.is-hot { transform: translate(-50%, -50%) scale(1.25); box-shadow: 0 0 0 8px rgba(10,100,240,.25), 0 6px 16px rgba(10,100,240,.4); }
+    @keyframes ping { 0% { transform: scale(1); opacity: .9; } 80%,100% { transform: scale(1.9); opacity: 0; } }
+
+    .story-end {
+      text-align: center; max-width: 720px; margin: 20px auto 0; padding-top: 56px;
+      border-top: 1px solid var(--line);
+    }
+    .story-end p { font-size: 19px; line-height: 1.5; color: rgba(14,14,16,.72); margin: 0 0 28px; }
+    .story-end b { color: var(--ink); }
+
+    .lightbox {
+      width: min(96vw, 1500px); max-width: none; max-height: 94vh; padding: 0; border: 0;
+      border-radius: 16px; background: #fff; box-shadow: 0 40px 120px rgba(0,0,0,.45); overflow: auto;
+    }
+    .lightbox::backdrop { background: rgba(11,11,15,.78); backdrop-filter: blur(6px); }
+    .lightbox img { display: block; width: 100%; height: auto; }
+    .lb-cap { margin: 0; padding: 12px 18px; font-size: 14px; color: var(--muted); }
+    .lb-close {
+      position: sticky; float: right; top: 10px; margin: 10px 10px -46px 0; z-index: 2;
+      width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
+      background: rgba(14,14,16,.78); color: #fff; font-size: 22px; line-height: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .pin::after, .shot { animation: none; }
+      .hero-shot { transform: none; }
+    }
+
+    @media (max-width: 980px) {
+      .chapter { grid-template-columns: 1fr; gap: 26px; padding: 48px 0; }
+      .ch-copy { position: static; }
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .rail-inner a { flex: 0 0 auto; }
+    }
+    @media (max-width: 820px) {
+      .story-rail { top: 64px; }
+      .hero-shot { margin-top: 44px; transform: none; border-radius: 12px; }
+    }
+    @media (max-width: 460px) {
+      .pin { width: 18px; height: 18px; font-size: 9px; box-shadow: 0 0 0 3px rgba(10,100,240,.22); }
+      .pin::after { display: none; }
+      .chapter h3 { font-size: 25px; }
+      .stats dt { font-size: 36px; }
+      .shot-bar span { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page" id="top">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top" aria-label="Donna home">
+        <span>Donna</span>
+      </a>
+      <div class="nav-links">
+        <a href="#story">Demo story</a>
+        <a href="#pattern">Pattern</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#local">Local</a>
+        <a class="github-mini" href="https://github.com/dotdrelle/llm-wiki-manager" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.69 5.47 7.78.4.08.55-.18.55-.4 0-.2-.01-.87-.01-1.58-2.01.38-2.53-.5-2.69-.95-.09-.23-.48-.95-.82-1.14-.28-.16-.68-.55-.01-.56.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.09-1.78-.21-3.64-.91-3.64-4.05 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 3.95c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.15-1.87 3.84-3.65 4.05.29.26.54.76.54 1.54 0 1.11-.01 2-.01 2.27 0 .22.15.48.55.4A8.13 8.13 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"/></svg>
+          GITHUB
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="kicker">Living knowledge for AI agents</div>
+    <h1>Turn company knowledge into grounded deliverables.</h1>
+    <p class="lead">Donna builds a structured, searchable knowledge layer from existing documents, then helps agents regenerate Markdown deliverables from memory, context and templates.</p>
+    <p class="sublead">Local-first by design. Source-grounded by default. Flexible across OpenAI, Anthropic, OpenAI-compatible endpoints and local models.</p>
+    <p class="compliance-note">
+      <strong>Regulated environments</strong>
+      Donna is designed to run without third-party desktop clients such as Claude Desktop or similar applications, which are often not approved in regulated organizations. It can operate locally or on controlled infrastructure, helping teams align with ANSSI security expectations and DINUM sovereign digital tooling principles.
+      <span class="badges">
+        <span>RGAA-minded</span>
+        <span>DSFR-inspired</span>
+        <span>On-premise ready</span>
+        <span>Sovereign AI compatible</span>
+        <span>MCP tools — local or remote</span>
+      </span>
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/dotdrelle/llm-wiki-manager" target="_blank" rel="noreferrer">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.69 5.47 7.78.4.08.55-.18.55-.4 0-.2-.01-.87-.01-1.58-2.01.38-2.53-.5-2.69-.95-.09-.23-.48-.95-.82-1.14-.28-.16-.68-.55-.01-.56.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.09-1.78-.21-3.64-.91-3.64-4.05 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 3.95c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.15-1.87 3.84-3.65 4.05.29.26.54.76.54 1.54 0 1.11-.01 2-.01 2.27 0 .22.15.48.55.4A8.13 8.13 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"/></svg>
+        Install from GitHub
+      </a>
+      <a class="btn secondary" href="#story">Follow a real run →</a>
+    </div>
+  
+    <a class="hero-shot" href="#story" aria-label="Follow the demo story">
+      <div class="shot-bar"><i></i><i></i><i></i><span>Donna · a generated note, every claim cited</span></div>
+      <img src="./assets/story/07-deliverable.webp" width="1354" height="756" alt="A Donna deliverable: a project note where each claim cites its source file." fetchpriority="high">
+    </a>
+  </section>
+
+  <section class="story" id="story" aria-labelledby="story-title">
+    <div class="story-head">
+      <div class="kicker">A real run, start to finish</div>
+      <h2 id="story-title">Four scattered documents. One sourced note. Eleven&nbsp;minutes.</h2>
+      <p class="sublead">Captured screen by screen in the demo workspace. The fictional <b>Orion</b> support project has four documents — a project brief, a vendor comparison, security requirements and an open-source review — and a review meeting coming up. The team needs one note that says what is known, what is missing, and where every line comes from.</p>
+      <dl class="stats">
+        <div><dt>4</dt><dd>source documents in</dd></div>
+        <div><dt>7</dt><dd>concepts in 5 families</dd></div>
+        <div><dt>13</dt><dd>evidence chains, frozen</dd></div>
+        <div><dt>11<small>min</small></dt><dd>16:34 → 16:45, ~28k tokens</dd></div>
+      </dl>
+    </div>
+    <nav class="story-rail" aria-label="Story chapters"><div class="rail-inner"><a href="#story-drop" data-step="1"><span>01</span>Drop</a><a href="#story-ingest" data-step="2"><span>02</span>Ingest</a><a href="#story-organize" data-step="3"><span>03</span>Organize</a><a href="#story-explore" data-step="4"><span>04</span>Explore</a><a href="#story-template" data-step="5"><span>05</span>Template</a><a href="#story-build" data-step="6"><span>06</span>Build</a><a href="#story-read" data-step="7"><span>07</span>Read</a><a href="#story-prove" data-step="8"><span>08</span>Prove</a><a href="#story-deliver" data-step="9"><span>09</span>Deliver</a></div><div class="rail-progress"><i></i></div></nav>
+    <div class="chapters">
+      <article class="chapter" id="story-drop" data-step="1">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">01</span><span class="ch-step">Drop</span><time>16:34</time></div>
+          <h3>Drop the documents in.</h3>
+          <p>Four files land in <b>Pending</b>: a project brief, a vendor comparison, security requirements and an open-source review. Markdown is written as-is; PDF and text are converted by the documents agent. Nothing is indexed yet — the inbox only shows what is waiting.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Pending inbox — four documents waiting to be ingested</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Drop zone: Markdown kept as-is, PDF and text converted</span></li><li data-pin="3"><span class="pin-dot">3</span><span>One click — or <code>/wiki-ingest</code> — starts ingestion</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          
+          <figure class="shot" id="drop-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:34</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1224/705"><img src="./assets/story/01-drop.webp" width="1224" height="705" alt="Donna demo workspace with four documents waiting in the Pending inbox." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:10.78%;top:25.53%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:20.42%;top:45.67%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:19.69%;top:16.88%" aria-hidden="true">3</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-ingest" data-step="2">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">02</span><span class="ch-step">Ingest</span><time>16:38</time></div>
+          <h3>Ask for the ingest. Approve before anything changes.</h3>
+          <p><code>/wiki-ingest</code> compiles a plan. Because it writes to the wiki, it waits: nothing runs before you approve. Once approved, the orchestrator delegates to the production agent, and the Activity panel shows the run live — files, parallel model calls, tokens.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Mutating task held until you approve or reject</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Said plainly in the chat: nothing runs before approval</span></li></ol><ol class="notes" data-shot="1" hidden><li data-pin="1"><span class="pin-dot">1</span><span>Live run: 4 files, up to 4 model calls at once, token count</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Delegated to the production agent, in a workspace-locked run</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Inspect or cancel at any time</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          <div class="tabs" role="tablist" aria-label="Screens"><button type="button" role="tab" aria-selected="true" aria-controls="ingest-0" data-shot="0">Awaiting approval</button><button type="button" role="tab" aria-selected="false" aria-controls="ingest-1" data-shot="1">Running</button></div>
+          <figure class="shot" id="ingest-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:38</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1268/712"><img src="./assets/story/02a-ingest-approval.webp" width="1268" height="712" alt="Ingest task paused, waiting for the user&#x27;s approval." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:76.34%;top:95.37%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:29.97%;top:29.78%" aria-hidden="true">2</span></div></figure><figure class="shot" id="ingest-1" data-shot="1" hidden><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:38</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1268/712"><img src="./assets/story/02b-ingest-running.webp" width="1268" height="712" alt="Ingest run in progress in the Activity panel." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:82.41%;top:25.84%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:45.74%;top:38.90%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:90.69%;top:41.71%" aria-hidden="true">3</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-organize" data-step="3">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">03</span><span class="ch-step">Organize</span><time>16:38</time></div>
+          <h3>The wiki organizes itself — and says what it couldn't check.</h3>
+          <p>The four sources become reading notes, then concept pages grouped by family. Every entry on a concept page links back to the file it came from. When the run ends, Donna reports what it could and could not verify instead of claiming success.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Project knowledge: concept pages grouped by family</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Reading notes: one per source document</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Run report: finished, but one result could not be checked</span></li></ol><ol class="notes" data-shot="1" hidden><li data-pin="1"><span class="pin-dot">1</span><span>The Orion concept, generated from the sources</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Every entry cites its file: <code>[src: wiki/sources/…]</code></span></li></ol>
+        </div>
+        <div class="ch-visual">
+          <div class="tabs" role="tablist" aria-label="Screens"><button type="button" role="tab" aria-selected="true" aria-controls="organize-0" data-shot="0">Wiki</button><button type="button" role="tab" aria-selected="false" aria-controls="organize-1" data-shot="1">Concept page</button></div>
+          <figure class="shot" id="organize-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:38</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1268/712"><img src="./assets/story/03a-wiki-tree.webp" width="1268" height="712" alt="Wiki tree after ingestion: project knowledge concepts and reading notes." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:9.78%;top:22.05%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:8.68%;top:45.37%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:45.58%;top:67.42%" aria-hidden="true">3</span></div></figure><figure class="shot" id="organize-1" data-shot="1" hidden><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:38</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1268/712"><img src="./assets/story/03b-concept-page.webp" width="1268" height="712" alt="Orion concept page listing its four sources with source links." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:7.73%;top:41.43%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:47.32%;top:44.94%" aria-hidden="true">2</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-explore" data-step="4">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">04</span><span class="ch-step">Explore</span><time>16:39</time></div>
+          <h3>See how the knowledge connects.</h3>
+          <p>The graph shows the same wiki from above. In the families view, two families are linked when they share sources. Switch to concepts + sources and the graph turns bipartite: Orion is the most cited concept, tagged by all four documents. Clicking a source opens its context without leaving the graph.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Project family: 1 concept, 4 sources</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Cross-family links, counted by shared sources</span></li></ol><ol class="notes" data-shot="1" hidden><li data-pin="1"><span class="pin-dot">1</span><span>Orion — cited by all four sources</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Source context, one click from the graph</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          <div class="tabs" role="tablist" aria-label="Screens"><button type="button" role="tab" aria-selected="true" aria-controls="explore-0" data-shot="0">Families</button><button type="button" role="tab" aria-selected="false" aria-controls="explore-1" data-shot="1">Concepts + sources</button></div>
+          <figure class="shot" id="explore-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:39</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/712"><img src="./assets/story/04a-graph-families.webp" width="1354" height="712" alt="Families graph with five concept families and cross-family links." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:49.78%;top:56.18%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:84.93%;top:50.28%" aria-hidden="true">2</span></div></figure><figure class="shot" id="explore-1" data-shot="1" hidden><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:39</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/712"><img src="./assets/story/04b-graph-sources.webp" width="1354" height="712" alt="Bipartite graph linking source documents to the concepts they tag." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:56.72%;top:46.07%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:84.93%;top:70.22%" aria-hidden="true">2</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-template" data-step="5">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">05</span><span class="ch-step">Template</span><time>16:40</time></div>
+          <h3>Write the deliverable once, as instructions.</h3>
+          <p>A template is plain Markdown: headings, and one instruction per section. This one asks for a summary built from wiki context only, cited key facts, open questions — <i>“if there are no documented gaps, say so”</i> — and next steps that <i>“do not invent commitments or decisions.”</i></p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Each section carries its own instruction</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Guardrails written in the template itself</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Build turns the template into a deliverable</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          
+          <figure class="shot" id="template-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:40</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/723"><img src="./assets/story/05-template.webp" width="1354" height="723" alt="Basic note template with an instruction under each heading." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:48.01%;top:26.83%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:54.14%;top:60.17%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:73.71%;top:3.18%" aria-hidden="true">3</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-build" data-step="6">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">06</span><span class="ch-step">Build</span><time>16:41</time></div>
+          <h3>Build — approve once, then watch the agents work.</h3>
+          <p><code>/wiki-build</code> pairs the template with wiki context and the build rules. Same contract as the ingest: approval first. The execution view then projects the run as a graph — run, phase, task, output — with container load, agent and tokens beside it.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span><code>/wiki-build templates/notes/basic-note.md</code></span></li><li data-pin="2"><span class="pin-dot">2</span><span>Approval required before the deliverable is written</span></li></ol><ol class="notes" data-shot="1" hidden><li data-pin="1"><span class="pin-dot">1</span><span>Run → build phase → task → <code>basic-note.md</code></span></li><li data-pin="2"><span class="pin-dot">2</span><span>Live stack metrics: 3 containers, CPU, memory, network</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Task detail: agent, duration, tokens, run journal</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          <div class="tabs" role="tablist" aria-label="Screens"><button type="button" role="tab" aria-selected="true" aria-controls="build-0" data-shot="0">Approval</button><button type="button" role="tab" aria-selected="false" aria-controls="build-1" data-shot="1">Execution</button></div>
+          <figure class="shot" id="build-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:41</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/723"><img src="./assets/story/06a-build-approval.webp" width="1354" height="723" alt="Build request waiting for approval." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:56.13%;top:47.72%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:77.77%;top:95.44%" aria-hidden="true">2</span></div></figure><figure class="shot" id="build-1" data-shot="1" hidden><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:41</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/723"><img src="./assets/story/06b-build-execution.webp" width="1354" height="723" alt="Execution graph of the build run with task details." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:39.44%;top:58.09%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:47.12%;top:21.85%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:83.60%;top:58.09%" aria-hidden="true">3</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-read" data-step="7">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">07</span><span class="ch-step">Read</span><time>16:42</time></div>
+          <h3>A note where every sentence has an address.</h3>
+          <p>The deliverable reads like a normal note — summary, key facts, open questions, next steps — but each claim carries a <code>[src: …]</code> pointing to the source it came from. The three vendors, the EU-hosting constraint, the review date: each one traceable.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Inline citation to the source fiche</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Sections follow the template</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Provenance opens the evidence behind the note</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          
+          <figure class="shot" id="read-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:42</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/756"><img src="./assets/story/07-deliverable.webp" width="1354" height="756" alt="Generated note with inline source citations after every claim." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:36.93%;top:35.32%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:63.81%;top:23.15%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:45.20%;top:5.29%" aria-hidden="true">3</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-prove" data-step="8">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">08</span><span class="ch-step">Prove</span><time>16:43</time></div>
+          <h3>Provenance: from a paragraph down to a hash.</h3>
+          <p>Provenance shows what the build actually used, frozen at build time: template and build context, the deliverable's sections, the source fiches they cite, and the archived raw files with line range and sha256. Here: 13 evidence chains, 4 fragments — exactly what the export relies on.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span>Frozen evidence of this exact build</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Key Facts section: 4 proofs</span></li><li data-pin="3"><span class="pin-dot">3</span><span>Source fiches the section cites</span></li><li data-pin="4"><span class="pin-dot">4</span><span>Archived raw file — line range and sha256</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          
+          <figure class="shot" id="prove-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:43</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/756"><img src="./assets/story/08-provenance.webp" width="1354" height="756" alt="Provenance view linking deliverable sections to source fiches and hashed archives." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:51.70%;top:13.10%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:41.51%;top:34.52%" aria-hidden="true">2</span><span class="pin" data-pin="3" style="left:71.49%;top:28.44%" aria-hidden="true">3</span><span class="pin" data-pin="4" style="left:87.74%;top:34.66%" aria-hidden="true">4</span></div></figure>
+        </div>
+      </article>
+      <article class="chapter" id="story-deliver" data-step="9">
+        <div class="ch-copy">
+          <div class="ch-meta"><span class="ch-num">09</span><span class="ch-step">Deliver</span><time>16:45</time></div>
+          <h3>Deliver the polished version.</h3>
+          <p><code>/deliver</code> publishes the note through the <code>document.publish</code> capability — after approval, once more. The polished export appears next to the build in Deliverables; the cited build stays alongside it as the reference.</p>
+          <ol class="notes" data-shot="0"><li data-pin="1"><span class="pin-dot">1</span><span><code>/deliver</code> on the built note</span></li><li data-pin="2"><span class="pin-dot">2</span><span>Polish run, live — with tokens and cancel</span></li></ol><ol class="notes" data-shot="1" hidden><li data-pin="1"><span class="pin-dot">1</span><span>Polished export, next to the cited build</span></li><li data-pin="2"><span class="pin-dot">2</span><span><code>document.publish</code> — done</span></li></ol>
+        </div>
+        <div class="ch-visual">
+          <div class="tabs" role="tablist" aria-label="Screens"><button type="button" role="tab" aria-selected="true" aria-controls="deliver-0" data-shot="0">Publishing</button><button type="button" role="tab" aria-selected="false" aria-controls="deliver-1" data-shot="1">Delivered</button></div>
+          <figure class="shot" id="deliver-0" data-shot="0"><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:45</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/756"><img src="./assets/story/09a-deliver-running.webp" width="1354" height="756" alt="Deliver run in progress, polishing the note." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:56.43%;top:22.75%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:83.46%;top:35.05%" aria-hidden="true">2</span></div></figure><figure class="shot" id="deliver-1" data-shot="1" hidden><div class="shot-bar"><i></i><i></i><i></i><span>Donna · demo workspace · 16:45</span><button class="zoom" type="button" aria-label="Enlarge screenshot">⤢</button></div><div class="shot-img" style="aspect-ratio:1354/756"><img src="./assets/story/09b-delivered.webp" width="1354" height="756" alt="Polished note delivered next to the original build." loading="lazy" decoding="async"><span class="pin" data-pin="1" style="left:12.92%;top:33.99%" aria-hidden="true">1</span><span class="pin" data-pin="2" style="left:78.43%;top:42.06%" aria-hidden="true">2</span></div></figure>
+        </div>
+      </article>
+    </div>
+    <div class="story-end">
+      <p><b>Then the sources move.</b> Edit the brief, drop a new requirement, re-run the build: the note follows, and its provenance with it.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/dotdrelle/llm-wiki-manager" target="_blank" rel="noreferrer">Run the demo yourself</a>
+        <a class="btn secondary" href="#architecture">How it works underneath</a>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="lightbox" aria-label="Screenshot">
+    <button type="button" class="lb-close" aria-label="Close">×</button>
+    <img alt="">
+    <p class="lb-cap"></p>
+  </dialog>
+
+  <section id="pattern">
+    <div class="split">
+      <div class="section-copy">
+        <div class="kicker">The Karpathy pattern</div>
+        <h2>The model is no longer the center.</h2>
+        <p>Donna follows the Karpathy pattern: useful AI systems are shaped by context, memory, tools and skills around the model. The model remains pluggable; the durable advantage is the knowledge layer and the procedures around it.</p>
+        <p>That is why Donna is presented as one product: a local application that gives agents grounded memory, traceable context and callable capabilities.</p>
+      </div>
+
+        <img onerror="this.style.display='none'" src="./assets/KarpathyPattern.webp" alt="Karpathy pattern with model, context, memory, tools and skills." loading="lazy">
+
+    </div>
+  </section>
+
+  <section class="architecture" id="architecture">
+    <div class="architecture-grid">
+      <div>
+        <div class="section-copy">
+          <div class="kicker">What Donna is</div>
+          <h2>A product layer for living knowledge.</h2>
+        </div>
+        <div class="numbered">
+          <div class="capability">
+            <div class="num">01</div>
+            <div>
+              <h3>Wiki</h3>
+              <p>A structured, searchable knowledge layer built from existing documents. Pages remain traceable back to their source, and the wiki can be exposed through MCP so other agents on the same machine can read from it.</p>
+            </div>
+          </div>
+          <div class="capability">
+            <div class="num">02</div>
+            <div>
+              <h3>Build</h3>
+              <p>A build agent combines exactly three inputs — memory, context and a Markdown template — to regenerate a deliverable. When sources change, the user can regenerate instead of rewriting the same document by hand.</p>
+            </div>
+          </div>
+          <div class="capability">
+            <div class="num">03</div>
+            <div>
+              <h3>Pilot</h3>
+              <p>A chat interface connects external MCP tools — local or remote — and reusable skills, then composes multi-step work in parallel, without asking the user to script each step manually.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="architecture-panel">
+        <div class="section-copy">
+          <div class="kicker">Architecture</div>
+          <h2>One local core. Multiple surfaces.</h2>
+          <p>Sources enter from the left. In the center, Donna turns them into memory, context and buildable deliverables — orchestrating specialized agents in parallel. On the right, people and agents consume the result through multiple surfaces: a terminal cockpit, a web chat and a visual knowledge graph. The model provider is swappable underneath.</p>
+        </div>
+        <img onerror="this.style.display='none'" src="./assets/LocalFirstAIKnowledgeCore.webp" alt="Donna local-first architecture connecting sources, core capabilities and consumers." loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section class="functional">
+    <div class="section-copy" style="text-align:center;max-width:var(--max);margin:0 auto;">
+      <div class="kicker">Functional diagram</div>
+      <h2>Inputs, MCP calls and outputs — at a glance.</h2>
+      <p class="sublead">External sources and structural template / build-context / skills flow through internal and external MCP servers, local or remote — a replaceable toolbox you can extend with as many MCPs as you need — into a source-grounded wiki, all driven by an agentic, multi-model orchestrator that dispatches work across specialized agents in parallel.</p>
+    </div>
+    <figure style="margin:34px auto 0;max-width:1000px;padding:0 16px;">
+      <img onerror="this.style.display='none'" src="./assets/functional-diagram.svg" alt="wikiLLM functional diagram: inputs and structural marketplace assets flow through internal and external MCP servers into the core wiki outputs, driven by the agentic orchestrator over isolated workspaces." loading="lazy" style="width:100%;height:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;">
+    </figure>
+  </section>
+
+  <section>
+    <div class="split reverse">
+        <img onerror="this.style.display='none'" src="./assets/TraceableKnowledgeGraph.webp" alt="Graph view showing connected knowledge nodes with one highlighted source." loading="lazy">
+      <div class="section-copy">
+        <div class="kicker">Graph view</div>
+        <h2>See how knowledge connects.</h2>
+        <p>The graph view makes the knowledge layer visible. It helps users inspect relationships between pages and sources, spot isolated content and understand where a deliverable gets its grounding.</p>
+        <p>For teams that need auditability, this is the difference between a black-box assistant and a navigable source-backed system.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div class="section-copy">
+        <div class="kicker">Chat & orchestration</div>
+        <h2>Let the agent compose the work.</h2>
+        <p>The chat is not only a conversation surface. It is where MCP tools are connected, skills become reusable named procedures, and multi-step work is triggered without hand-written scripts.</p>
+        <p>The user stays in control while Donna reads, builds, checks and routes work across specialized agents in parallel — through any MCP tool, local or remote.</p>
+      </div>
+
+        <img onerror="this.style.display='none'" width="600" height="400" src="./assets/ChatThatOrchestrates.webp" alt="Donna chat interface composing skills and MCP tools." loading="lazy">
+
+    </div>
+  </section>
+
+  <section class="models">
+    <div class="kicker">Models</div>
+    <h2>Bring the model that fits the job.</h2>
+    <p class="sublead">Donna is explicit about multi-provider execution: cloud models, OpenAI-compatible endpoints and local models can all fit the same product pattern.</p>
+    <div class="chips">
+      <span class="chip">OPENAI</span>
+      <span class="chip">ANTHROPIC</span>
+      <span class="chip">OPENAI-COMPATIBLE</span>
+      <span class="chip">LOCAL MODELS - MLX - OLLAMA</span>
+    </div>
+  </section>
+
+  <div class="dark-band" id="local">
+    <div class="inner">
+      <div class="section-copy">
+        <div class="kicker">Local-first</div>
+        <h2>Runs where your knowledge already lives.</h2>
+        <p>Donna is not a SaaS and needs no server to host. It runs as a local Docker stack on your machine or your own infrastructure, with local indexes, local workspaces and optional local model execution — your data never leaves your environment.</p>
+        <p>For sensitive environments, the local-first model is not a footnote. It is the feature.</p>
+      </div>
+
+        <img onerror="this.style.display='none'" width="600" height="400" src="./assets/RunOnYourMachine.webp" alt="Donna running locally inside a Docker stack on your machine." loading="lazy">
+
+    </div>
+  </div>
+
+  <section class="final">
+    <div class="kicker">Start with your documents</div>
+    <h2>Install Donna. Build from source-backed memory.</h2>
+    <p class="sublead">A practical path to AI deliverables that can say where they came from — and when the source is missing.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/dotdrelle/llm-wiki-manager" target="_blank" rel="noreferrer">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.69 5.47 7.78.4.08.55-.18.55-.4 0-.2-.01-.87-.01-1.58-2.01.38-2.53-.5-2.69-.95-.09-.23-.48-.95-.82-1.14-.28-.16-.68-.55-.01-.56.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.09-1.78-.21-3.64-.91-3.64-4.05 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 3.95c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.15-1.87 3.84-3.65 4.05.29.26.54.76.54 1.54 0 1.11-.01 2-.01 2.27 0 .22.15.48.55.4A8.13 8.13 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"/></svg>
+        Install from GitHub
+      </a>
+      <a class="btn secondary" href="#story">Replay the story</a>
+      <a class="btn secondary" href="mailto:tapir-drags2h@icloud.com">Talk to us</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-copy">
+        <span>© Donna — Living knowledge for AI agents.</span>
+        <p class="disclaimer">
+          Donna is an independent product and is not an official service of the French State, DINUM or the République Française.
+        </p>
+      </div>
+      <a href="https://github.com/dotdrelle/llm-wiki-manager" target="_blank" rel="noreferrer">Open on GitHub →</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // tabs: swap screenshot + its notes inside a chapter
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const tabs = ch.querySelectorAll('.tabs button');
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      const k = btn.dataset.shot;
+      tabs.forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+      ch.querySelectorAll('.shot, .notes').forEach(el => { el.hidden = el.dataset.shot !== k; });
+    }));
+    // note <-> pin highlight
+    ch.querySelectorAll('.notes').forEach(list => {
+      const shot = ch.querySelector('.shot[data-shot="' + list.dataset.shot + '"]');
+      list.querySelectorAll('li').forEach(li => {
+        const pin = shot.querySelector('.pin[data-pin="' + li.dataset.pin + '"]');
+        const on = v => { li.classList.toggle('is-hot', v); pin && pin.classList.toggle('is-hot', v); };
+        li.addEventListener('mouseenter', () => on(true));
+        li.addEventListener('mouseleave', () => on(false));
+      });
+    });
+  });
+
+  // lightbox
+  const lb = document.querySelector('.lightbox');
+  if (lb && lb.showModal) {
+    const img = lb.querySelector('img'), cap = lb.querySelector('.lb-cap');
+    const open = src => { img.src = src.currentSrc || src.src; img.alt = src.alt; cap.textContent = src.alt; lb.showModal(); };
+    document.querySelectorAll('.shot').forEach(f => {
+      const im = f.querySelector('img');
+      f.querySelector('.shot-img').addEventListener('click', () => open(im));
+      f.querySelector('.zoom').addEventListener('click', () => open(im));
+    });
+    lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
+    lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
+  } else {
+    document.querySelectorAll('.zoom').forEach(z => z.hidden = true);
+  }
+
+  // rail: active chapter + progress
+  const links = [...document.querySelectorAll('.rail-inner a')];
+  const chapters = [...document.querySelectorAll('.chapter')];
+  const bar = document.querySelector('.rail-progress i');
+  const wrap = document.querySelector('.chapters');
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const mid = innerHeight * 0.5;
+    let idx = 0;
+    chapters.forEach((c, i) => { if (c.getBoundingClientRect().top < mid) idx = i; });
+    links.forEach((a, i) => {
+      a.classList.toggle('is-active', i === idx);
+      a.classList.toggle('is-done', i < idx);
+    });
+    const r = wrap.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (mid - r.top) / r.height));
+    bar.style.width = (p * 100).toFixed(1) + '%';
+    const act = links[idx];
+    if (act && act.parentElement.scrollWidth > act.parentElement.clientWidth) {
+      const pr = act.parentElement;
+      const target = act.offsetLeft - pr.clientWidth / 2 + act.clientWidth / 2;
+      if (Math.abs(pr.scrollLeft - target) > 40) pr.scrollLeft = target;
+    }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>
