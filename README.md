@@ -6,4 +6,4 @@ Static landing page for **Donna — Living knowledge for AI agents**, served by 
 - `assets/` — illustrations and the demo-story screenshots (`assets/story/`, WebP)
 - `CNAME` — custom domain for GitHub Pages
 
-Source of truth for the page: `llm-wiki/_tmp/branding/www` in the wikiLLM workspace.
+This repository is the only source of the page: edit `index.html` here, commit, and push to publish.
